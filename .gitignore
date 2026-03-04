@@ -1,0 +1,11 @@
+*.tar.xz
+*.csv
+*.sha256
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.vscode/
+*.idea/
