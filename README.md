@@ -1,6 +1,8 @@
 ### 1. To Use
 
-1. Download dataset at https://cicresearch.ca/IOTDataset/Datasense/browse.php?p=dataset%2Fprocessed_files
+1. Download dataset at https://www.unb.ca/cic/datasets/iiot-dataset-2025.html (scroll to bottom to download dataset -> dataset -> processed files)
+
+ https://cicresearch.ca/IOTDataset/Datasense/browse.php?p=dataset%2Fprocessed_files
 - download **all_attack_benign_samples.tar.xz**
 
 a. Extract this .tar within the /data/ subdirectory
