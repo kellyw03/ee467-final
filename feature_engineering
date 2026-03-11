@@ -1,0 +1,12 @@
+# (1) Feature pruning
+# method 1: prune manually
+# - look at low variance and high correlation and remove repetitive cols
+
+
+# method 2: auto with PCA
+
+# method 3: combine
+# prune manuall -> PCA
+
+
+
