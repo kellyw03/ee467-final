@@ -43,7 +43,7 @@ def standardize(data):
 
 # main pipeline for loading, combining, and removing data
 #SMOTE: bbolean to use SMOTE imbalance handling
-def preprocess(SMOTE=False):
+def preprocess(smote_select=False):
     comb_df = get_data()
     labels = comb_df['label2']
 
@@ -59,8 +59,8 @@ def preprocess(SMOTE=False):
     x_test_scaled = scaler.transform(x_test)
 
     # optional: SMOTE imbalance
-    if SMOTE:
-        smote = SMOTE(random_state=RAND_STATE)
-        x_train_scaled, y_train = smote.fit_resample(x_train_scaled, y_train)
+    if smote_select:
+        smote_instance = SMOTE(random_state=RAND_STATE)
+        x_train_scaled, y_train = smote_instance.fit_resample(x_train_scaled, y_train)
 
     return x_train_scaled, x_test_scaled, y_train, y_test
