@@ -19,7 +19,7 @@ def baseline(x_train, y_train, class_weight="balanced"):
     return model
 
 # 1 SVM
-def svm(x_train, y_train, C=1.0, kernel="rbf", gamma="scale", class_weight="balanced"):
+def svm_model(x_train, y_train, C=1.0, kernel="rbf", gamma="scale", class_weight="balanced"):
   model = SVC(
     C=C,
     kernel=kernel,
