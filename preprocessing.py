@@ -42,16 +42,18 @@ def standardize(data):
 
 
 # main pipeline for loading, combining, and removing data
-#SMOTE: bbolean to use SMOTE imbalance handling
-def preprocess(SMOTE=False):
+#SMOTE: boolean to use SMOTE imbalance handling
+def preprocess(smote_select=False):
     comb_df = get_data()
     labels = comb_df['label2']
 
-    #remove id labels - only concerned with main classification
+    # Keep numeric data for first evaluation, deal with categorical data later
+    # remove id labels - only concerned with main classification
     comb_df.drop(REMOVE_COLS, axis=1, inplace=True)
+    numeric_df = comb_df.select_dtypes(include=["number"])
 
-    #split w/ stratify
-    x_train, x_test, y_train, y_test = train_test_split(comb_df, labels, test_size=0.2, random_state=RAND_STATE, shuffle=True, stratify=labels)
+    # split w/ stratify
+    x_train, x_test, y_train, y_test = train_test_split(numeric_df, labels, test_size=0.2, random_state=RAND_STATE, shuffle=True, stratify=labels)
     
     # standardize
     scaler = preprocessing.RobustScaler()
@@ -59,8 +61,8 @@ def preprocess(SMOTE=False):
     x_test_scaled = scaler.transform(x_test)
 
     # optional: SMOTE imbalance
-    if SMOTE:
-        smote = SMOTE(random_state=RAND_STATE)
-        x_train_scaled, y_train = smote.fit_resample(x_train_scaled, y_train)
+    if smote_select:
+        smote_instance = SMOTE(random_state=RAND_STATE)
+        x_train_scaled, y_train = smote_instance.fit_resample(x_train_scaled, y_train)
 
     return x_train_scaled, x_test_scaled, y_train, y_test
