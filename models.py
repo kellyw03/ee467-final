@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import (
     RandomForestClassifier, BaggingClassifier, GradientBoostingClassifier, VotingClassifier)
+from xgboost import XGBClassifier
 
 RAND_STATE = 67
 
@@ -19,7 +20,7 @@ def baseline(x_train, y_train, class_weight="balanced"):
     return model
 
 # 1 SVM
-def svm_model(x_train, y_train, C=1.0, kernel="rbf", gamma="scale", class_weight="balanced"):
+def svm_model(x_train, y_train, C=1.0, kernel="linear", gamma="scale", class_weight="balanced"):
   model = SVC(
     C=C,
     kernel=kernel,
@@ -100,7 +101,26 @@ def gradient_boost(x_train, y_train, n_estimators=100, learning_rate=0.1, max_de
 
   return model
 
-# # 6 Soft Voting
+# 6 XGBoost
+def xgboost_model(x_train, y_train, n_estimators=200, max_depth=6, learning_rate=0.1,
+                subsample=0.8, colsample_bytree=0.8):
+  model = XGBClassifier(
+    n_estimators=n_estimators,
+    max_depth=max_depth,
+    learning_rate=learning_rate,
+    subsample=subsample,
+    colsample_bytree=colsample_bytree,
+    objective="multi:softprob",
+    eval_metric="mlogloss",
+    random_state=RAND_STATE,
+    n_jobs=-1
+  )
+
+  model.fit(x_train, y_train)
+
+  return model
+  
+# 7 Soft Voting
 def soft_voting(x_train, y_train, tree_max_depth=10, class_weight="balanced"):
   lr = LogisticRegression(
     max_iter=2000,
