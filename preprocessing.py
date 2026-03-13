@@ -42,15 +42,36 @@ def standardize(data):
 
 
 # main pipeline for loading, combining, and removing data
-#SMOTE: boolean to use SMOTE imbalance handling
-def preprocess(smote_select=False):
+# smote_select: boolean to use SMOTE imbalance handling
+# sample_frac: take fraction of sample from dataset
+# sample_n: take number of sample from dataset
+def preprocess(smote_select=False, sample_frac=None, sample_n=None):
     comb_df = get_data()
-    labels = comb_df['label2']
+    labels = comb_df['label2'].copy()
 
     # Keep numeric data for first evaluation, deal with categorical data later
     # remove id labels - only concerned with main classification
     comb_df.drop(REMOVE_COLS, axis=1, inplace=True)
     numeric_df = comb_df.select_dtypes(include=["number"])
+
+    # optional downsampling before split
+    if sample_frac is not None:
+      numeric_df, _, labels, _ = train_test_split(
+        numeric_df,
+        labels,
+        train_size=sample_frac,
+        random_state=RAND_STATE,
+        stratify=labels
+    )
+
+    if sample_n is not None:
+      numeric_df, _, labels, _ = train_test_split(
+        numeric_df,
+        labels,
+        train_size=sample_n,
+        random_state=RAND_STATE,
+        stratify=labels
+    )
 
     # split w/ stratify
     x_train, x_test, y_train, y_test = train_test_split(numeric_df, labels, test_size=0.2, random_state=RAND_STATE, shuffle=True, stratify=labels)
