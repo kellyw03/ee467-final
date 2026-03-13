@@ -11,7 +11,7 @@ def evaluate_model_base(model, x_test, y_test):
   y_pred = model.predict(x_test)
 
   acc = accuracy_score(y_test, y_pred)
-  prec = precision_score(y_test, y_pred, average="macro")
+  prec = precision_score(y_test, y_pred, average="macro", zero_division=0)
   rec = recall_score(y_test, y_pred, average="macro")
   f1 = f1_score(y_test, y_pred, average="macro")
 
