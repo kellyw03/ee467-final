@@ -69,7 +69,7 @@ def manual_reduce(x_train, x_test):
 # manual - manual feature reduction
 # PCA - use PCA
 # default: both
-def feature_extraction(x_train, x_test, mode="both"):
+def reduce_dim(x_train, x_test, mode="both"):
     print(f"Original shape: {x_train.shape}")
     if mode == "PCA":
         x_train, x_test = pca_reduce(x_train, x_test)
@@ -80,4 +80,3 @@ def feature_extraction(x_train, x_test, mode="both"):
         x_train, x_test = pca_reduce(x_train, x_test)
     print(f"Reduced shape: {x_train.shape}")
     return x_train, x_test
-
