@@ -59,6 +59,12 @@ def preprocess(smote_select=False, sample_frac=None, sample_n=None):
     comb_df.drop(REMOVE_COLS, axis=1, inplace=True)
     numeric_df = comb_df.select_dtypes(include=["number"])
 
+        # Count NaNs in each column
+    nan_counts = comb_df.isna().sum()
+
+    # Show only columns that actually have NaNs
+    print(nan_counts[nan_counts > 0])
+
     # optional downsampling before split
     if sample_frac is not None:
       numeric_df, _, labels, _ = train_test_split(
@@ -80,25 +86,24 @@ def preprocess(smote_select=False, sample_frac=None, sample_n=None):
 
     # split w/ stratify
     x_train, x_test, y_train, y_test = train_test_split(numeric_df, labels, test_size=0.2, random_state=RAND_STATE, shuffle=True, stratify=labels)
-    
-    # standardize
-    scaler = preprocessing.RobustScaler()
-    x_train_scaled = scaler.fit_transform(x_train)
-    x_test_scaled = scaler.transform(x_test)
 
     # optional: SMOTE imbalance
     if smote_select:
         smote_instance = SMOTE(random_state=RAND_STATE)
-        x_train_scaled, y_train = smote_instance.fit_resample(x_train_scaled, y_train)
+        x_train, y_train = smote_instance.fit_resample(x_train, y_train)
 
-    return x_train_scaled, x_test_scaled, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
 def add_features(data):
-    data['traffic_ratio'] = data['network_packets_src_count'] / ['network_packets_dst_count']
-    data['sending_ratio'] = data['network_bytes_src'] / data['network_bytes_dst']
+    data['traffic_ratio'] = data['network_packets_src_count'] / data['network_packets_dst_count'].replace(0, 1e-6)
+    data['port_ratio'] = data['network_ports_src_count'] / data['network_ports_dst_count']
     data['ip_coverage'] = data['network_ips_dst_count'] / data["network_ips_all_count"]
     data['port_coverage'] = data['network_ports_dst_count'] / data["network_ports_all_count"]
     data['fragmentation'] = data["network_fragmented-packets"] / data["network_packets_all_count"]
-    data['failed_conn_attempts'] = data['network_tcp-flags-rst_count'] / ['network_packets_all_count']
+    data['failed_conn_attempts'] = data['network_tcp-flags-rst_count'] / data['network_packets_all_count']
+
+    data[['port_ratio','ip_coverage','port_coverage','fragmentation','failed_conn_attempts']] = \
+    data[['port_ratio','ip_coverage','port_coverage','fragmentation','failed_conn_attempts']].fillna(0)
+
     data['packet_rate'] = data['network_packets_all_count'] / (data['timestamp_end'] - data['timestamp_start']).dt.total_seconds()
     return data
